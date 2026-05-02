@@ -1,4 +1,4 @@
-# Attendance Control System - UNHSJM
+# Sistema de Control de Asistencia - UNHSJM
 
 Sistema web para el control académico de asistencia de la Universidad Nacional Héroes San José de las Mulas.
 
