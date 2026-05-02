@@ -1,0 +1,101 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Classes.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "_Layout";
+}
+
+<h1>Edit</h1>
+
+<h4>TblClass</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TblClass.ClassId" />
+            <div class="form-group">
+                <label asp-for="TblClass.ClassDate" class="control-label"></label>
+                <input asp-for="TblClass.ClassDate" class="form-control" />
+                <span asp-validation-for="TblClass.ClassDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.StartTime" class="control-label"></label>
+                <input asp-for="TblClass.StartTime" class="form-control" />
+                <span asp-validation-for="TblClass.StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.EndTime" class="control-label"></label>
+                <input asp-for="TblClass.EndTime" class="form-control" />
+                <span asp-validation-for="TblClass.EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.TokenLink" class="control-label"></label>
+                <input asp-for="TblClass.TokenLink" class="form-control" />
+                <span asp-validation-for="TblClass.TokenLink" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.OpenDateTime" class="control-label"></label>
+                <input asp-for="TblClass.OpenDateTime" class="form-control" />
+                <span asp-validation-for="TblClass.OpenDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.CloseDateTime" class="control-label"></label>
+                <input asp-for="TblClass.CloseDateTime" class="form-control" />
+                <span asp-validation-for="TblClass.CloseDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.AllowSelfRegister" class="control-label"></label>
+                <input asp-for="TblClass.AllowSelfRegister" class="form-control" />
+                <span asp-validation-for="TblClass.AllowSelfRegister" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.TeacherId" class="control-label"></label>
+                <select asp-for="TblClass.TeacherId" class="form-control" asp-items="ViewBag.TeacherId" ></select>
+                <span asp-validation-for="TblClass.TeacherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.GroupId" class="control-label"></label>
+                <select asp-for="TblClass.GroupId" class="form-control" asp-items="ViewBag.GroupId" ></select>
+                <span asp-validation-for="TblClass.GroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.SubjectId" class="control-label"></label>
+                <select asp-for="TblClass.SubjectId" class="form-control" asp-items="ViewBag.SubjectId" ></select>
+                <span asp-validation-for="TblClass.SubjectId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.ClassroomId" class="control-label"></label>
+                <select asp-for="TblClass.ClassroomId" class="form-control" asp-items="ViewBag.ClassroomId" ></select>
+                <span asp-validation-for="TblClass.ClassroomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.ClassStatusId" class="control-label"></label>
+                <select asp-for="TblClass.ClassStatusId" class="form-control" asp-items="ViewBag.ClassStatusId" ></select>
+                <span asp-validation-for="TblClass.ClassStatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TblClass.IsActive" /> @Html.DisplayNameFor(model => model.TblClass.IsActive)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="TblClass.CreatedDate" class="control-label"></label>
+                <input asp-for="TblClass.CreatedDate" class="form-control" />
+                <span asp-validation-for="TblClass.CreatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

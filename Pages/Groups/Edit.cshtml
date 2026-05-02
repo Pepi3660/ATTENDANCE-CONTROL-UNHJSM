@@ -1,0 +1,74 @@
+﻿@page "{id:int}"
+@model AttendanceControl.Web.Pages.Groups.EditModel
+
+@{
+    ViewData["Title"] = "Editar grupo";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Editar grupo</h2>
+            <p class="text-muted mb-0">Actualiza carrera, turno, nombre y estado del grupo.</p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-warning shadow-sm rounded-3">@Model.Message</div>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="GroupId" />
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                Datos del grupo
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Nombre del grupo</label>
+                        <input asp-for="GroupName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId" asp-items="Model.Careers" class="form-select" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Turno</label>
+                        <select asp-for="ShiftId" asp-items="Model.Shifts" class="form-select" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="IsActive" class="form-select">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-page="Index" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+    </form>
+
+</div>

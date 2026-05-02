@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UNHSJM - Registro de Asistencia</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        :root {
+            --unh-blue: #203f7d;
+            --unh-blue-dark: #0f172a;
+            --unh-cyan: #22b8df;
+            --unh-magenta: #e41483;
+            --unh-gold: #ffd200;
+            --unh-green: #19d39a;
+            --surface: rgba(30, 43, 65, .94);
+            --surface-border: rgba(148, 163, 184, .24);
+            --muted: #aab6ca;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(34, 184, 223, .16), transparent 28%),
+                radial-gradient(circle at 90% 15%, rgba(228, 20, 131, .12), transparent 24%),
+                linear-gradient(180deg, #101827 0%, #0b1324 100%);
+            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #eef5ff;
+        }
+
+        .public-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px;
+        }
+
+        .attendance-card {
+            width: 100%;
+            max-width: 620px;
+            background: var(--surface);
+            color: #eef5ff;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid var(--surface-border);
+            box-shadow: 0 28px 80px rgba(0,0,0,.35);
+            backdrop-filter: blur(10px);
+        }
+
+        .public-card-wide { max-width: 760px; }
+
+        .attendance-header {
+            padding: 28px 28px 24px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(32, 63, 125, .88), rgba(15, 23, 42, .95));
+            border-bottom: 4px solid var(--unh-gold);
+        }
+
+        .institution-logo {
+            max-width: 250px;
+            width: 80%;
+            background: white;
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 14px 32px rgba(0,0,0,.18);
+        }
+
+        .institution-label {
+            font-size: .88rem;
+            color: #d5e4ff;
+            margin-bottom: 4px;
+        }
+
+        .attendance-body { padding: 28px; }
+
+        .class-summary {
+            background: rgba(15, 23, 42, .56);
+            border: 1px solid rgba(148, 163, 184, .22);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .class-summary h5 {
+            color: #ffffff;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .summary-kicker {
+            color: var(--unh-gold);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .72rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .summary-grid div {
+            background: rgba(255,255,255,.06);
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .summary-grid span {
+            display: block;
+            color: var(--muted);
+            font-size: .78rem;
+        }
+
+        .summary-grid strong {
+            display: block;
+            color: #ffffff;
+            font-size: .92rem;
+        }
+
+        .form-label { color: #e7eefc; }
+
+        .form-control,
+        .form-select {
+            border-radius: 14px;
+            padding: 13px 14px;
+            border: 1px solid rgba(148, 163, 184, .35);
+            background-color: rgba(15, 23, 42, .72);
+            color: #ffffff;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: rgba(15, 23, 42, .85);
+            color: #ffffff;
+            border-color: var(--unh-cyan);
+            box-shadow: 0 0 0 .18rem rgba(34, 184, 223, .18);
+        }
+
+        .form-control::placeholder { color: #7d8aa1; }
+
+        .field-help,
+        .registration-help,
+        .success-help {
+            display: block;
+            color: var(--muted);
+            font-size: .9rem;
+            margin-top: 8px;
+        }
+
+        .registration-help {
+            background: rgba(34, 184, 223, .09);
+            border: 1px solid rgba(34, 184, 223, .22);
+            padding: 12px 14px;
+            border-radius: 14px;
+        }
+
+        .btn-unp-primary {
+            background: linear-gradient(135deg, var(--unh-blue), var(--unh-cyan));
+            border: none;
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 13px 16px;
+            font-weight: 800;
+            box-shadow: 0 14px 32px rgba(34,184,223,.22);
+        }
+
+        .btn-unp-primary:hover { color: #ffffff; filter: brightness(1.05); }
+
+        .btn-unp-gold {
+            background: linear-gradient(135deg, var(--unh-gold), #ffb703);
+            border: none;
+            color: #111827;
+            border-radius: 14px;
+            padding: 13px 16px;
+            font-weight: 800;
+        }
+
+        .ui-message {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            border: 1px solid transparent;
+            font-weight: 600;
+        }
+
+        .ui-message-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+        }
+
+        .ui-message-info {
+            background: rgba(34, 184, 223, .13);
+            border-color: rgba(34, 184, 223, .38);
+            color: #a8ecff;
+        }
+
+        .ui-message-info .ui-message-icon { background: rgba(34, 184, 223, .25); }
+
+        .ui-message-warning {
+            background: rgba(255, 210, 0, .13);
+            border-color: rgba(255, 210, 0, .38);
+            color: #ffe788;
+        }
+
+        .ui-message-warning .ui-message-icon { background: rgba(255, 210, 0, .25); }
+
+        .ui-message-error {
+            background: rgba(228, 20, 131, .13);
+            border-color: rgba(228, 20, 131, .36);
+            color: #ffbadc;
+        }
+
+        .ui-message-error .ui-message-icon { background: rgba(228, 20, 131, .22); }
+
+        .success-panel {
+            text-align: center;
+            padding: 38px 18px 28px;
+        }
+
+        .success-icon {
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 26px;
+            border-radius: 50%;
+            border: 7px solid var(--unh-green);
+            color: var(--unh-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 54px;
+            font-weight: 800;
+        }
+
+        .success-message {
+            background: rgba(25, 211, 154, .13);
+            border: 1px solid rgba(25, 211, 154, .62);
+            color: #76ffd0;
+            padding: 16px 18px;
+            border-radius: 14px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .01em;
+        }
+
+        @@media (max-width: 576px) {
+            .public-wrapper { padding: 0; align-items: stretch; }
+            .attendance-card { min-height: 100vh; border-radius: 0; }
+            .attendance-body { padding: 22px; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .institution-logo { width: 92%; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="public-wrapper">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,160 @@
+@page "{id:int}"
+@model AttendanceControl.Web.Pages.Teachers.EditModel
+
+@{
+    ViewData["Title"] = "Edit Teacher";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Editar Maestro</h2>
+            <p class="text-muted mb-0">
+                Actualiza datos personales, documento, contacto y acceso al sistema del docente.
+            </p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">Volver</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="card border-success shadow-sm mb-4">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width:42px;height:42px;">✓</div>
+                <div>
+                    <strong>Operación completada</strong>
+                    <div class="text-muted">@Model.SuccessMessage</div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="card border-warning shadow-sm mb-4">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center" style="width:42px;height:42px;">!</div>
+                <div>
+                    <strong>Revisión requerida</strong>
+                    <div class="text-muted">@Model.Message</div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="TeacherId" />
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">Datos personales</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Primer nombre</label>
+                        <input asp-for="FirstName" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo nombre</label>
+                        <input asp-for="SecondName" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Primer apellido</label>
+                        <input asp-for="LastName" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo apellido</label>
+                        <input asp-for="SecondSurName" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="IsActive" class="form-select">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">Documento y contacto</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo documento</label>
+                        <select asp-for="DocumentTypeId" asp-items="Model.DocumentTypes" class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Documento</label>
+                        <input asp-for="Document" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Compañía telefónica</label>
+                        <select asp-for="TelephoneCompanyId" asp-items="Model.TelephoneCompanies" class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Correo</label>
+                        <input asp-for="Email" class="form-control" />
+                        <small class="text-muted">Este correo se puede usar para el usuario del docente.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <span>Acceso al sistema</span>
+                @if (Model.HasSystemUser)
+                {
+                    <span class="badge bg-light text-secondary">Usuario existente</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Sin usuario</span>
+                }
+            </div>
+            <div class="card-body">
+                <div class="form-check form-switch mb-3">
+                    <input asp-for="ManageSystemUser" class="form-check-input" />
+                    <label asp-for="ManageSystemUser" class="form-check-label fw-semibold">
+                        Crear o actualizar usuario de acceso para este maestro
+                    </label>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Nombre de usuario</label>
+                        <input asp-for="UserName" class="form-control" placeholder="ej: mvictor" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nueva contraseña</label>
+                        <input asp-for="NewPassword" type="password" class="form-control" placeholder="Dejar vacío si no cambia" />
+                        <small class="text-muted">Si el usuario ya existe, solo se actualiza al escribir una nueva.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Estado del usuario</label>
+                        <select asp-for="UserIsActive" class="form-select">
+                            <option value="true">Usuario activo</option>
+                            <option value="false">Usuario bloqueado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-page="Index" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+    </form>
+</div>

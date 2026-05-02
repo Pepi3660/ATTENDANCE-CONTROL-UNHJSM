@@ -1,0 +1,211 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Students.CreateModel
+
+@{
+    ViewData["Title"] = "Registrar estudiante";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Registrar estudiante</h2>
+            <p class="text-muted mb-0">
+                Agrega datos personales, documento, contacto y grupo académico.
+            </p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-warning shadow-sm rounded-3">
+            @Model.Message
+        </div>
+    }
+
+    <form method="post">
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                Datos personales
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Primer nombre</label>
+                        <input asp-for="FirstName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo nombre</label>
+                        <input asp-for="SecondName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Primer apellido</label>
+                        <input asp-for="LastName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo apellido</label>
+                        <input asp-for="SecondSurName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Género</label>
+                        <select asp-for="Gender" class="form-select" required>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                Documento y contacto
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo documento</label>
+                        <select asp-for="DocumentTypeId"
+                                asp-items="Model.DocumentTypes"
+                                class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Documento</label>
+                        <input asp-for="Document"
+                               class="form-control"
+                               placeholder="Cédula, carnet o código persona" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Compañía telefónica</label>
+                        <select asp-for="TelephoneCompanyId"
+                                asp-items="Model.TelephoneCompanies"
+                                class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono</label>
+                        <input asp-for="Phone"
+                               class="form-control"
+                               placeholder="Número celular" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label">Correo</label>
+                        <input asp-for="Email"
+                               class="form-control"
+                               placeholder="correo@ejemplo.com" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                Información académica
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId"
+                                asp-items="Model.Careers"
+                                class="form-select"
+                                id="careerSelect">
+                            <option value="">Seleccione una carrera</option>
+                        </select>
+                        <small class="text-muted">
+                            Este campo ayuda a ubicar el grupo correcto.
+                        </small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Grupo oficial</label>
+                        <select asp-for="GroupId"
+                                asp-items="Model.Groups"
+                                class="form-select"
+                                id="groupSelect">
+                            <option value="">Sin grupo</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-page="Index" class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Guardar estudiante
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const careerSelect = document.getElementById("careerSelect");
+            const groupSelect = document.getElementById("groupSelect");
+
+            const allGroups = Array.from(groupSelect.options).map(option => ({
+                value: option.value,
+                text: option.text
+            }));
+
+            careerSelect.addEventListener("change", function () {
+                const selectedCareerText = careerSelect.options[careerSelect.selectedIndex]?.text || "";
+
+                groupSelect.innerHTML = "";
+
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.text = "Sin grupo";
+                groupSelect.appendChild(defaultOption);
+
+                allGroups
+                    .filter(g => g.value === "" || g.text.startsWith(selectedCareerText + " - "))
+                    .forEach(g => {
+                        if (g.value !== "") {
+                            const option = document.createElement("option");
+                            option.value = g.value;
+                            option.text = g.text;
+                            groupSelect.appendChild(option);
+                        }
+                    });
+            });
+        });
+    </script>
+}

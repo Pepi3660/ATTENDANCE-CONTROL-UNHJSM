@@ -1,0 +1,153 @@
+@page
+@model AttendanceControl.Web.Pages.Classes.IndexModel
+
+@{
+    ViewData["Title"] = "Clases";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Clases</h2>
+            <p class="text-muted mb-0">Gestión de clases, enlaces de asistencia y control por docente.</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary">Crear clase</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">Filtros de búsqueda</div>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar</label>
+                        <input asp-for="Search" class="form-control" placeholder="Asignatura, carrera, grupo, aula o docente" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Fecha</label>
+                        <input asp-for="Date" type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach (var career in Model.Careers)
+                            {
+                                <option value="@career.CareerId">@career.CareerName</option>
+                            }
+                        </select>
+                    </div>
+                    @if (User.IsInRole("ADMIN"))
+                    {
+                        <div class="col-md-2">
+                            <label class="form-label">Docente</label>
+                            <select asp-for="TeacherId" class="form-select">
+                                <option value="">Todos</option>
+                                @foreach (var teacher in Model.Teachers)
+                                {
+                                    <option value="@teacher.TeacherId">@teacher.FirstName @teacher.LastName</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Listado de clases</span>
+            <span class="badge bg-light text-primary">@Model.Classes.Count registro(s)</span>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Horario</th>
+                        <th>Asignatura</th>
+                        <th>Docente</th>
+                        <th>Carrera</th>
+                        <th>Grupo</th>
+                        <th>Turno</th>
+                        <th>Aula</th>
+                        <th>Estado</th>
+                        <th>Enlace</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Classes.Any())
+                    {
+                        <tr>
+                            <td colspan="11" class="text-center text-muted py-4">No se encontraron clases con los filtros seleccionados.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Classes)
+                        {
+                            var attendanceUrl = $"{Request.Scheme}://{Request.Host}/Attendance/Register?token={item.TokenLink}";
+                            <tr>
+                                <td>@item.ClassDate.ToString("dd/MM/yyyy")</td>
+                                <td>@item.StartTime?.ToString("HH:mm") - @item.EndTime?.ToString("HH:mm")</td>
+                                <td class="fw-semibold">@item.Subject?.SubjectName</td>
+                                <td>@item.Teacher?.FirstName @item.Teacher?.LastName</td>
+                                <td>@item.Group?.Career?.CareerName</td>
+                                <td>@item.Group?.GroupName</td>
+                                <td>@item.Group?.Shift?.ShiftName</td>
+                                <td>@item.Classroom?.ClassroomName</td>
+                                <td>
+                                    @if (item.ClassStatus?.ClassStatusName == "Open")
+                                    {
+                                        <span class="badge bg-success">Abierta</span>
+                                    }
+                                    else if (item.ClassStatus?.ClassStatusName == "Closed")
+                                    {
+                                        <span class="badge bg-secondary">Cerrada</span>
+                                    }
+                                    else if (item.ClassStatus?.ClassStatusName == "Cancelled")
+                                    {
+                                        <span class="badge bg-danger">Cancelada</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.ClassStatus?.ClassStatusName</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-sm btn-outline-primary" href="@attendanceUrl" target="_blank">Abrir</a>
+                                        <button type="button" class="btn btn-sm btn-outline-success" onclick="navigator.clipboard.writeText('@attendanceUrl')">Copiar</button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <a asp-page="./AttendanceList" asp-route-id="@item.ClassId" class="btn btn-sm btn-outline-success">Asistencia</a>
+                                        <a asp-page="./Edit" asp-route-id="@item.ClassId" class="btn btn-sm btn-outline-warning">Editar</a>
+                                        <a asp-page="./Details" asp-route-id="@item.ClassId" class="btn btn-sm btn-outline-info">Detalles</a>
+                                        <form method="post"
+                                              asp-page-handler="Delete"
+                                              asp-route-id="@item.ClassId"
+                                              data-confirm-submit="true"
+                                              data-confirm-title="Desactivar clase"
+                                              data-confirm-message="¿Seguro que deseas desactivar esta clase? El registro de asistencia dejará de estar disponible."
+                                              data-confirm-button="Sí, desactivar"
+                                              style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

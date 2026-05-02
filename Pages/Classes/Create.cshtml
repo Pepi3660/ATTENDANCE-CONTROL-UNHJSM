@@ -1,0 +1,150 @@
+@page
+@model AttendanceControl.Web.Pages.Classes.CreateModel
+
+@{
+    ViewData["Title"] = "Create Class";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Crear Clase</h2>
+            <p class="text-muted mb-0">
+                Registra una clase y genera automáticamente el enlace de asistencia.
+            </p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Datos de la clase
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Fecha</label>
+                        <input asp-for="TblClass.ClassDate" type="date" class="form-control" />
+                        <span asp-validation-for="TblClass.ClassDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Hora inicio</label>
+                        <input asp-for="TblClass.StartTime" type="time" class="form-control" />
+                        <span asp-validation-for="TblClass.StartTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Hora fin</label>
+                        <input asp-for="TblClass.EndTime" type="time" class="form-control" />
+                        <span asp-validation-for="TblClass.EndTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Disponible desde</label>
+                        <input asp-for="TblClass.OpenDateTime" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="TblClass.OpenDateTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Disponible hasta</label>
+                        <input asp-for="TblClass.CloseDateTime" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="TblClass.CloseDateTime" class="text-danger"></span>
+                    </div>
+
+                    @if (User.IsInRole("ADMIN"))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Docente</label>
+                            <select asp-for="TblClass.TeacherId"
+                                    class="form-select"
+                                    asp-items="ViewBag.TeacherId">
+                                <option value="">Seleccione un docente</option>
+                            </select>
+                            <span asp-validation-for="TblClass.TeacherId" class="text-danger"></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="TblClass.TeacherId" />
+                    }
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Grupo</label>
+                        <select asp-for="TblClass.GroupId"
+                                class="form-select"
+                                asp-items="ViewBag.GroupId">
+                            <option value="">Seleccione un grupo</option>
+                        </select>
+                        <span asp-validation-for="TblClass.GroupId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Asignatura</label>
+                        <select asp-for="TblClass.SubjectId"
+                                class="form-select"
+                                asp-items="ViewBag.SubjectId">
+                            <option value="">Seleccione una asignatura</option>
+                        </select>
+                        <span asp-validation-for="TblClass.SubjectId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Aula</label>
+                        <select asp-for="TblClass.ClassroomId"
+                                class="form-select"
+                                asp-items="ViewBag.ClassroomId">
+                            <option value="">Seleccione un aula</option>
+                        </select>
+                        <span asp-validation-for="TblClass.ClassroomId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="TblClass.ClassStatusId"
+                                class="form-select"
+                                asp-items="ViewBag.ClassStatusId">
+                            <option value="">Seleccione un estado</option>
+                        </select>
+                        <span asp-validation-for="TblClass.ClassStatusId" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a asp-page="Index" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Crear clase y generar enlace
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-warning shadow-sm rounded-3">
+        @Model.Message
+    </div>
+}

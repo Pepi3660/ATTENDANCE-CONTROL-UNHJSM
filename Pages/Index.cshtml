@@ -1,0 +1,52 @@
+﻿@page
+@model AttendanceControl.Web.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+
+    <h1 class="mb-4">Dashboard</h1>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h5>Estudiantes</h5>
+                    <h2>@Model.TotalStudents</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h5>Docentes</h5>
+                    <h2>@Model.TotalTeachers</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <h5>Clases</h5>
+                    <h2>@Model.TotalClasses</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <h5>Asistencia de Hoy</h5>
+                    <h2>@Model.AttendanceToday</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,64 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Groups.CreateModel
+
+@{
+    ViewData["Title"] = "Crear grupo";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Crear grupo</h2>
+            <p class="text-muted mb-0">Registra un grupo académico asociado a una carrera y turno.</p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-warning shadow-sm rounded-3">@Model.Message</div>
+    }
+
+    <form method="post">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                Datos del grupo
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Nombre del grupo</label>
+                        <input asp-for="GroupName" class="form-control" placeholder="Ej: ISI-IIIA-MAT" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId" asp-items="Model.Careers" class="form-select" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Turno</label>
+                        <select asp-for="ShiftId" asp-items="Model.Shifts" class="form-select" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-page="Index" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar grupo</button>
+        </div>
+    </form>
+
+</div>

@@ -1,0 +1,87 @@
+@page
+@model AttendanceControl.Web.Pages.Attendance.RegisterModel
+@{
+    Layout = "_PublicLayout";
+}
+
+<div class="attendance-card public-card">
+    <div class="attendance-header">
+        <img class="institution-logo" src="~/images/log_UNHSJM_Texto.jpg" alt="UNHSJM" />
+        <div class="institution-label">Sistema de Control de Asistencia Académica</div>
+        <h3 class="fw-bold mb-0">Marcar asistencia</h3>
+    </div>
+
+    <div class="attendance-body">
+        @if (Model.IsSuccess)
+        {
+            <div class="success-panel">
+                <div class="success-icon">✓</div>
+                <div class="success-message">@Model.Message</div>
+                <p class="success-help">Ya puedes cerrar esta ventana.</p>
+            </div>
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(Model.SubjectName))
+            {
+                <div class="class-summary mb-4">
+                    <div class="summary-kicker">Clase</div>
+                    <h5>@Model.SubjectName</h5>
+
+                    <div class="summary-grid">
+                        <div><span>Docente</span><strong>@Model.TeacherName</strong></div>
+                        <div><span>Fecha</span><strong>@Model.ClassDateText</strong></div>
+                        <div><span>Horario</span><strong>@Model.ClassSchedule</strong></div>
+                        <div><span>Grupo</span><strong>@Model.GroupName</strong></div>
+                        <div><span>Turno</span><strong>@Model.ShiftName</strong></div>
+                        <div><span>Área</span><strong>@Model.AreaName</strong></div>
+                        <div><span>Ubicación</span><strong>@Model.BuildingName / @Model.ClassroomName</strong></div>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="ui-message ui-message-@Model.MessageType">
+                    <div class="ui-message-icon">
+                        @(Model.MessageType == "error" ? "!" : Model.MessageType == "warning" ? "⚠" : "i")
+                    </div>
+                    <div>@Model.Message</div>
+                </div>
+            }
+
+            <div class="registration-help mb-3">
+                Puedes marcar asistencia usando tu
+                <strong>carnet, código persona, cédula o número celular</strong>.
+            </div>
+
+            <form method="post">
+                <input type="hidden" asp-for="Token" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Identificación del estudiante</label>
+                    <input asp-for="SearchValue"
+                           class="form-control form-control-lg text-center"
+                           placeholder="Carnet, código persona, cédula o celular"
+                           autocomplete="off"
+                           required />
+                    <small class="field-help">
+                        Ejemplo: 2212494, 0010101010000A o número celular registrado.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-unp-primary w-100">
+                    Registrar mi asistencia
+                </button>
+            </form>
+
+            @if (Model.ShowRegisterButton)
+            {
+                <a class="btn btn-unp-gold w-100 mt-3"
+                       href="@Url.Page("/Attendance/RegisterStudent", new { token = Model.Token, value = Model.SearchValue })">
+                    Registrarme por primera vez
+                </a>
+            }
+        }
+    </div>
+</div>

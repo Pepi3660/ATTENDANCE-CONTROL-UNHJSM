@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - UNHSJM Asistencia</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand-panel">
+                <img src="~/images/log_UNHSJM_Texto.jpg" alt="UNHSJM" class="brand-logo" />
+                <div class="brand-subtitle">Control de Asistencia</div>
+            </div>
+
+            <nav class="app-menu">
+                <a class="app-menu-link" asp-page="/Index">
+                    <span class="menu-icon">📊</span>
+                    <span>Panel principal</span>
+                </a>
+
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <a class="app-menu-link" asp-page="/Careers/Index">
+                        <span class="menu-icon">🎯</span>
+                        <span>Carreras</span>
+                    </a>
+
+                    <a class="app-menu-link" asp-page="/Groups/Index">
+                        <span class="menu-icon">👥</span>
+                        <span>Grupos</span>
+                    </a>
+
+                    <a class="app-menu-link" asp-page="/Students/Index">
+                        <span class="menu-icon">🎓</span>
+                        <span>Estudiantes</span>
+                    </a>
+
+                    <a class="app-menu-link" asp-page="/Teachers/Index">
+                        <span class="menu-icon">👨‍🏫</span>
+                        <span>Docentes</span>
+                    </a>
+
+                }
+
+                @if (User.IsInRole("ADMIN") || User.IsInRole("TEACHER"))
+                {
+                    <a class="app-menu-link" asp-page="/Classes/Index">
+                        <span class="menu-icon">🏫</span>
+                        <span>Clases</span>
+                    </a>
+
+                    <a class="app-menu-link" asp-page="/Reports/Index">
+                        <span class="menu-icon">📄</span>
+                        <span>Reportes</span>
+                    </a>
+
+                    <a class="app-menu-link" asp-page="/Reports/Consolidated">
+                        <span class="menu-icon">📊</span>
+                        <span>Consolidado</span>
+                    </a>
+                }
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="small text-white-50">UNHSJM</div>
+                <div class="small text-white-50">Sistema académico</div>
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-topbar">
+                <div>
+                    <div class="topbar-kicker">Universidad Nacional Héroes San José de las Mulas</div>
+                    <h1 class="topbar-title">@ViewData["Title"]</h1>
+                </div>
+
+                <div class="user-panel">
+                    <div class="user-avatar">
+                        @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                    </div>
+                    <div class="user-meta">
+                        <div class="user-name">@User.Identity?.Name</div>
+                        <div>
+                            @if (User.IsInRole("ADMIN"))
+                            {
+                                <span class="role-badge role-admin">Administrador</span>
+                            }
+                            else if (User.IsInRole("TEACHER"))
+                            {
+                                <span class="role-badge role-teacher">Docente</span>
+                            }
+                            else
+                            {
+                                <span class="role-badge role-user">Usuario</span>
+                            }
+                        </div>
+                    </div>
+                    <a asp-page="/Logout" class="btn btn-sm btn-outline-danger btn-logout">Salir</a>
+                </div>
+            </header>
+
+            <section class="app-content">
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+
+    <div class="modal fade" id="appConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content app-modal">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <div class="modal-icon-danger">!</div>
+                        <h5 class="modal-title mt-3" id="appConfirmTitle">Confirmar acción</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body pt-2">
+                    <p id="appConfirmMessage" class="mb-0 text-muted">¿Deseas continuar?</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="appConfirmButton">Sí, continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

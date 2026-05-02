@@ -1,0 +1,373 @@
+@page
+@model AttendanceControl.Web.Pages.Reports.ConsolidatedModel
+
+@{
+    ViewData["Title"] = "Reporte Consolidado";
+    Layout = "_Layout";
+
+    var startDate = Model.StartDate?.ToString("yyyy-MM-dd");
+    var endDate = Model.EndDate?.ToString("yyyy-MM-dd");
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="text-uppercase fw-bold text-primary small">
+                Universidad Nacional Héroes San José de las Mulas
+            </div>
+            <h2 class="mb-1">Reporte Consolidado de Asistencia</h2>
+            <p class="text-muted mb-0">
+                Control acumulado por estudiante, carrera, grupo, turno, docente y asignatura.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a asp-page="/Reports/Index" class="btn btn-outline-secondary">
+                Reporte diario
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtros
+        </div>
+
+        <div class="card-body">
+            <form method="get" id="consolidatedFiltersForm">
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha inicial</label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha final</label>
+                        <input asp-for="EndDate" type="date" class="form-control" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Grupo</label>
+                        <select asp-for="GroupId" asp-items="Model.Groups" class="form-select" id="groupFilter">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Asignatura</label>
+                        <select asp-for="SubjectId" asp-items="Model.Subjects" class="form-select" id="subjectFilter">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button class="btn btn-outline-primary btn-sm"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#advancedFilters">
+                            Más filtros
+                        </button>
+                    </div>
+
+                    <div class="collapse col-12" id="advancedFilters">
+                        <div class="row g-3 mt-1">
+
+                            @if (Model.IsAdminUser)
+                            {
+                                <div class="col-md-3">
+                                    <label class="form-label">Carrera</label>
+                                    <select asp-for="CareerId" asp-items="Model.Careers" class="form-select" id="careerFilter">
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Turno</label>
+                                    <select asp-for="ShiftId" asp-items="Model.Shifts" class="form-select" id="shiftFilter">
+                                        <option value="">Todos</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Docente</label>
+                                    <select asp-for="TeacherId" asp-items="Model.Teachers" class="form-select" id="teacherFilter">
+                                        <option value="">Todos</option>
+                                    </select>
+                                </div>
+                            }
+
+                            <div class="col-md-3">
+                                <label class="form-label">Estudiante</label>
+                                <select asp-for="StudentId" asp-items="Model.Students" class="form-select" id="studentFilter">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-flex align-items-end gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary">
+                            Buscar
+                        </button>
+
+                        <button type="submit" name="handler" value="ExportPdf" class="btn btn-danger">
+                            Exportar PDF
+                        </button>
+
+                        <button type="submit" name="handler" value="ExportCsv" class="btn btn-success">
+                            Exportar CSV
+                        </button>
+
+                        <a asp-page="./Consolidated" class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4 g-3">
+
+        <div class="col-md-2">
+            <div class="card bg-dark text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Estudiantes</small>
+                    <h3 class="mb-0">@Model.TotalStudents</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Encuentros</small>
+                    <h3 class="mb-0">@Model.TotalMeetings</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Presentes</small>
+                    <h3 class="mb-0">@Model.TotalPresent</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <small>Tardes</small>
+                    <h3 class="mb-0">@Model.TotalLate</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Ausentes</small>
+                    <h3 class="mb-0">@Model.TotalAbsent</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card bg-info text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <small>Justificadas</small>
+                    <h3 class="mb-0">@Model.TotalJustified</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span>Resultados consolidados</span>
+            <span class="badge bg-light text-dark">@Model.Results.Count estudiante(s)</span>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Carnet</th>
+                        <th>Estudiante</th>
+                        <th>Género</th>
+
+                        @if (!Model.CareerId.HasValue)
+                        {
+                            <th>Carrera</th>
+                        }
+
+                        @if (!Model.GroupId.HasValue)
+                        {
+                            <th>Grupo</th>
+                        }
+
+                        @if (!Model.ShiftId.HasValue)
+                        {
+                            <th>Turno</th>
+                        }
+
+                        <th>Encuentros</th>
+                        <th>Presentes</th>
+                        <th>Tardes</th>
+                        <th>Ausentes</th>
+                        <th>Justificadas</th>
+                        <th>% Asistencia</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Results.Any())
+                    {
+                        <tr>
+                            <td colspan="12" class="text-center text-muted py-4">
+                                No se encontraron datos consolidados con los filtros seleccionados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Results)
+                        {
+                            <tr>
+                                <td>@item.Carnet</td>
+                                <td class="fw-semibold">@item.StudentName</td>
+
+                                <td>
+                                    @if (item.Gender == "M")
+                                    {
+                                        <span class="badge bg-primary">M</span>
+                                    }
+                                    else if (item.Gender == "F")
+                                    {
+                                        <span class="badge bg-info text-dark">F</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Gender</span>
+                                    }
+                                </td>
+
+                                @if (!Model.CareerId.HasValue)
+                                {
+                                    <td>@item.CareerName</td>
+                                }
+
+                                @if (!Model.GroupId.HasValue)
+                                {
+                                    <td>@item.GroupName</td>
+                                }
+
+                                @if (!Model.ShiftId.HasValue)
+                                {
+                                    <td>@item.ShiftName</td>
+                                }
+
+                                <td>@item.TotalMeetings</td>
+                                <td><span class="badge bg-success">@item.PresentCount</span></td>
+                                <td><span class="badge bg-warning text-dark">@item.LateCount</span></td>
+                                <td><span class="badge bg-danger">@item.AbsentCount</span></td>
+                                <td>@item.JustifiedCount</td>
+                                <td class="fw-bold">@item.AttendancePercentage.ToString("0.0")%</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        const careerFilter = document.getElementById("careerFilter");
+        const shiftFilter = document.getElementById("shiftFilter");
+        const groupFilter = document.getElementById("groupFilter");
+        const teacherFilter = document.getElementById("teacherFilter");
+        const subjectFilter = document.getElementById("subjectFilter");
+        const studentFilter = document.getElementById("studentFilter");
+
+        function fillSelect(select, items, defaultText) {
+            if (!select) return;
+
+            const currentValue = select.value;
+            select.innerHTML = "";
+
+            const option = document.createElement("option");
+            option.value = "";
+            option.textContent = defaultText;
+            select.appendChild(option);
+
+            items.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item.value;
+                opt.textContent = item.text;
+                select.appendChild(opt);
+            });
+
+            if ([...select.options].some(o => o.value === currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        async function refreshConnectedFilters(source) {
+            const careerId = careerFilter?.value || "";
+            const shiftId = shiftFilter?.value || "";
+            const groupId = groupFilter?.value || "";
+            const teacherId = teacherFilter?.value || "";
+            const subjectId = subjectFilter?.value || "";
+
+            const url =
+                `?handler=FilterOptions&careerId=${careerId}&shiftId=${shiftId}&groupId=${groupId}&teacherId=${teacherId}&subjectId=${subjectId}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (source === "career") {
+                fillSelect(groupFilter, data.groups, "Todos");
+                fillSelect(shiftFilter, data.shifts, "Todos");
+                fillSelect(subjectFilter, data.subjects, "Todas");
+                fillSelect(studentFilter, data.students, "Todos");
+            }
+
+            if (source === "shift") {
+                fillSelect(groupFilter, data.groups, "Todos");
+                fillSelect(subjectFilter, data.subjects, "Todas");
+                fillSelect(studentFilter, data.students, "Todos");
+            }
+
+            if (source === "group") {
+                fillSelect(subjectFilter, data.subjects, "Todas");
+                fillSelect(studentFilter, data.students, "Todos");
+            }
+
+            if (source === "teacher") {
+                fillSelect(subjectFilter, data.subjects, "Todas");
+                fillSelect(groupFilter, data.groups, "Todos");
+                fillSelect(studentFilter, data.students, "Todos");
+            }
+
+            if (source === "subject") {
+                fillSelect(groupFilter, data.groups, "Todos");
+                fillSelect(studentFilter, data.students, "Todos");
+            }
+        }
+
+        careerFilter?.addEventListener("change", () => refreshConnectedFilters("career"));
+        shiftFilter?.addEventListener("change", () => refreshConnectedFilters("shift"));
+        groupFilter?.addEventListener("change", () => refreshConnectedFilters("group"));
+        teacherFilter?.addEventListener("change", () => refreshConnectedFilters("teacher"));
+        subjectFilter?.addEventListener("change", () => refreshConnectedFilters("subject"));
+    </script>
+}

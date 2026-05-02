@@ -1,0 +1,187 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Teachers.IndexModel
+
+@{
+    ViewData["Title"] = "Teachers";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Maestros</h2>
+            <p class="text-muted mb-0">
+                Registro, búsqueda y consulta de docentes del sistema.
+            </p>
+        </div>
+
+        <a asp-page="Create" class="btn btn-primary">
+            Registrar maestro
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            Filtros de búsqueda
+        </div>
+
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Buscar</label>
+                        <input asp-for="Search"
+                               class="form-control"
+                               placeholder="Nombre, documento, teléfono o correo" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            Buscar
+                        </button>
+
+                        <a asp-page="./Index" class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Listado de maestros</span>
+            <span class="badge bg-light text-primary">
+                @Model.Teachers.Count registro(s)
+            </span>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Maestro</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Teachers.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No se encontraron maestros con los filtros seleccionados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var teacher in Model.Teachers)
+                        {
+                            var document = teacher.TblDocumentTeachers.FirstOrDefault(d => d.IsActive);
+                            var phone = teacher.TblPhoneTeachers.FirstOrDefault(p => p.IsActive);
+                            var email = teacher.TblEmailTeachers.FirstOrDefault(e => e.IsActive);
+
+                            <tr>
+                                <td class="fw-semibold">
+                                    @teacher.FirstName @teacher.SecondName @teacher.LastName @teacher.SecondSurName
+                                </td>
+
+                                <td>
+                                    @if (document != null)
+                                    {
+                                        <span>
+                                            @document.DocumentType.DocumentType: @document.Document
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin documento</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (phone != null)
+                                    {
+                                        <span>
+                                            @phone.Phone
+                                            <small class="text-muted">
+                                                (@phone.IdTelephoneCompanyNavigation.Company)
+                                            </small>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin teléfono</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (email != null)
+                                    {
+                                        <span>@email.Email</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin correo</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (teacher.IsActive)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-page="./Edit"
+                                               asp-route-id="@teacher.TeacherId"
+                                               class="btn btn-sm btn-outline-warning">
+                                            Editar
+                                        </a>
+
+                                        @if (teacher.IsActive)
+                                        {
+                                            <form method="post"
+                                                  asp-page-handler="Delete"
+                                                  asp-route-id="@teacher.TeacherId"
+                                                  style="display:inline;">
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

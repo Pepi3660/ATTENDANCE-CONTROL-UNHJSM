@@ -1,0 +1,361 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Classes.AttendanceListModel
+
+@{
+    ViewData["Title"] = "Asistencia de Clase";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Asistencia de Clase</h2>
+            <p class="text-muted mb-0">
+                Control de estudiantes presentes, tardíos y ausentes.
+            </p>
+        </div>
+
+        <a asp-page="./Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    @if (Model.ClassInfo != null)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span>Información de la clase</span>
+                <span class="badge bg-light text-primary">
+                    @Model.ClassInfo.ClassDate.ToString("dd/MM/yyyy")
+                </span>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Asignatura</small>
+                            <div class="fw-bold">@Model.ClassInfo.Subject.SubjectName</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Docente</small>
+                            <div class="fw-bold">
+                                @Model.ClassInfo.Teacher.FirstName @Model.ClassInfo.Teacher.LastName
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Horario</small>
+                            <div class="fw-bold">
+                                @Model.ClassInfo.StartTime?.ToString("HH:mm") - @Model.ClassInfo.EndTime?.ToString("HH:mm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Grupo / Turno</small>
+                            <div class="fw-bold">
+                                @Model.ClassInfo.Group.GroupName - @Model.ClassInfo.Group.Shift.ShiftName
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Área / Edificio</small>
+                            <div class="fw-bold">
+                                @Model.ClassInfo.Classroom.Building.Area.Initial - @Model.ClassInfo.Classroom.Building.BuildingName
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <small class="text-muted">Aula</small>
+                            <div class="fw-bold">@Model.ClassInfo.Classroom.ClassroomName</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row mb-4 g-3">
+
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Total registrados</small>
+                    <h2 class="mb-0">@Model.Total</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body text-center">
+                    <small>Masculino</small>
+                    <h2 class="mb-0">@Model.MaleTotal</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <small>Femenino</small>
+                    <h2 class="mb-0">@Model.FemaleTotal</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <small>% Asistencia</small>
+                    <h2 class="mb-0">@Model.AttendancePercentage.ToString("0.0")%</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.AttendanceUrl))
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                Enlace y QR de asistencia
+            </div>
+
+            <div class="card-body">
+                <div class="row align-items-center">
+
+                    <div class="col-md-8">
+                        <label class="form-label">Enlace público</label>
+                        <div class="input-group">
+                            <input id="attendanceUrl"
+                                   type="text"
+                                   class="form-control"
+                                   value="@Model.AttendanceUrl"
+                                   readonly />
+
+                            <button type="button"
+                                    class="btn btn-outline-primary"
+                                    onclick="navigator.clipboard.writeText(document.getElementById('attendanceUrl').value)">
+                                Copiar
+                            </button>
+
+                            <a href="@Model.AttendanceUrl"
+                                   target="_blank"
+                                   class="btn btn-primary">
+                                Abrir
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 text-center mt-3 mt-md-0">
+                        <div id="qrcode" class="d-inline-block border rounded p-2 bg-white"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <span>Estudiantes registrados</span>
+
+            @if (Model.ClassInfo != null)
+            {
+                <div class="d-flex gap-2 flex-wrap">
+
+                    <button type="button"
+                            class="btn btn-sm btn-outline-light"
+                            onclick="copyAttendanceSummary()">
+                        Copiar resumen
+                    </button>
+
+                    <a asp-page-handler="ExportCsv"
+                           asp-route-id="@Model.ClassInfo.ClassId"
+                           class="btn btn-sm btn-outline-light">
+                        Exportar CSV
+                    </a>
+
+                    <a asp-page-handler="ExportPdf"
+                           asp-route-id="@Model.ClassInfo.ClassId"
+                           class="btn btn-sm btn-outline-light">
+                        Exportar PDF
+                    </a>
+
+                    <form method="post" asp-page-handler="MarkAbsents" class="m-0"
+                          data-confirm-submit="true"
+                          data-confirm-title="Marcar ausentes"
+                          data-confirm-message="¿Deseas marcar como ausentes a los estudiantes inscritos que no registraron asistencia?"
+                          data-confirm-button="Sí, marcar ausentes">
+                        <input type="hidden" name="id" value="@Model.ClassInfo.ClassId" />
+
+                        <button type="submit" class="btn btn-sm btn-warning">
+                            Marcar ausentes
+                        </button>
+                    </form>
+
+                    <form method="post" asp-page-handler="CloseClass" class="m-0"
+                          data-confirm-submit="true"
+                          data-confirm-title="Cerrar clase"
+                          data-confirm-message="¿Cerrar clase? Esto bloqueará el registro y marcará ausentes automáticamente."
+                          data-confirm-button="Sí, cerrar clase">
+                        <input type="hidden" name="id" value="@Model.ClassInfo.ClassId" />
+
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Cerrar clase
+                        </button>
+                    </form>
+
+                </div>
+            }
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Carnet</th>
+                        <th>Género</th>
+                        <th>Estado</th>
+                        <th>Hora</th>
+                        <th>Justificada</th>
+                        <th>Observación</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Attendances.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Todavía no hay asistencias registradas.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Attendances)
+                        {
+                            var carnet = item.Student.TblDocumentStudents
+                                .FirstOrDefault(d => d.IsActive && d.DocumentType.DocumentType.ToLower().Contains("carnet"))?.Document
+                                ?? "Sin carnet";
+
+                            <tr>
+                                <td class="fw-semibold">
+                                    @item.Student.FirstName @item.Student.LastName
+                                </td>
+
+                                <td>@carnet</td>
+
+                                <td>
+                                    @if (item.Student.Gender == "M")
+                                    {
+                                        <span class="badge bg-primary">M</span>
+                                    }
+                                    else if (item.Student.Gender == "F")
+                                    {
+                                        <span class="badge bg-warning text-dark">F</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Student.Gender</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.AttendanceStatusId == 1)
+                                    {
+                                        <span class="badge bg-success">✓ Presente</span>
+                                    }
+                                    else if (item.AttendanceStatusId == 2)
+                                    {
+                                        <span class="badge bg-warning text-dark">⏱ Tarde</span>
+                                    }
+                                    else if (item.AttendanceStatusId == 3)
+                                    {
+                                        <span class="badge bg-danger">✕ Ausente</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            @item.AttendanceStatus.AttendanceStatusName
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>@item.RegisterTime.ToString("HH:mm")</td>
+
+                                <td>
+                                    @if (item.IsJustified)
+                                    {
+                                        <span class="badge bg-info text-dark">Sí</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (string.IsNullOrWhiteSpace(item.Observation))
+                                    {
+                                        <span class="text-muted">Sin observación</span>
+                                    }
+                                    else
+                                    {
+                                        @item.Observation
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    @if (!string.IsNullOrWhiteSpace(Model.AttendanceUrl))
+    {
+        <script>
+            new QRCode(document.getElementById("qrcode"), {
+            text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceUrl)),
+            width: 160,
+            height: 160
+            });
+        </script>
+    }
+
+    <script>
+        function copyAttendanceSummary() {
+        const text = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.QuickSummaryText));
+        navigator.clipboard.writeText(text);
+
+        if (window.showToast) {
+        showToast("Resumen copiado correctamente.", "success");
+        }
+        }
+    </script>
+}

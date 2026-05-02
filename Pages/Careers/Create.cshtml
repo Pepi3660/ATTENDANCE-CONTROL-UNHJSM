@@ -1,0 +1,45 @@
+@page
+@model AttendanceControl.Web.Pages.Careers.CreateModel
+
+@{
+    ViewData["Title"] = "Registrar carrera";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Registrar carrera</h2>
+            <p class="text-muted mb-0">Agrega una carrera académica al catálogo institucional.</p>
+        </div>
+        <a asp-page="Index" class="btn btn-outline-secondary">Volver</a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-warning">@Model.Message</div>
+    }
+
+    <form method="post">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">Datos de la carrera</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">ID de carrera</label>
+                        <input asp-for="CareerId" class="form-control" placeholder="Opcional: si se deja vacío se genera automático" />
+                        <small class="text-muted">Úsalo solo si manejas códigos institucionales manuales.</small>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Nombre de carrera</label>
+                        <input asp-for="CareerName" class="form-control" required placeholder="Ej: Ingeniería en Sistemas" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-page="Index" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar carrera</button>
+        </div>
+    </form>
+</div>

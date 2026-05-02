@@ -1,0 +1,145 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Groups.IndexModel
+
+@{
+    ViewData["Title"] = "Grupos";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Grupos</h2>
+            <p class="text-muted mb-0">Gestión de grupos académicos por carrera y turno.</p>
+        </div>
+
+        <a asp-page="Create" class="btn btn-primary">
+            Crear grupo
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            Filtros de búsqueda
+        </div>
+
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar</label>
+                        <input asp-for="Search" class="form-control" placeholder="Grupo, carrera o turno" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId" asp-items="Model.Careers" class="form-select">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Turno</label>
+                        <select asp-for="ShiftId" asp-items="Model.Shifts" class="form-select">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Listado de grupos</span>
+            <span class="badge bg-light text-primary">@Model.Groups.Count registro(s)</span>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Carrera</th>
+                        <th>Turno</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Groups.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No se encontraron grupos.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var group in Model.Groups)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@group.GroupName</td>
+                                <td>@group.Career.CareerName</td>
+                                <td>@group.Shift.ShiftName</td>
+
+                                <td>
+                                    @if (group.IsActive)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-page="./Edit"
+                                               asp-route-id="@group.GroupId"
+                                               class="btn btn-sm btn-outline-warning">
+                                            Editar
+                                        </a>
+
+                                        @if (group.IsActive)
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger js-confirm-action"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#confirmActionModal"
+                                                    data-action-url="?handler=Delete&id=@group.GroupId"
+                                                    data-title="Desactivar grupo"
+                                                    data-message="¿Seguro que deseas desactivar este grupo?">
+                                                Eliminar
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,157 @@
+﻿@page
+@model AttendanceControl.Web.Pages.Teachers.CreateModel
+
+@{
+    ViewData["Title"] = "Create Teacher";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Registrar Maestro</h2>
+            <p class="text-muted mb-0">
+                Agrega los datos básicos y de contacto del docente.
+            </p>
+        </div>
+
+        <a asp-page="Index" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-warning">
+            @Model.Message
+        </div>
+    }
+
+    <form method="post">
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                Datos personales
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Primer nombre</label>
+                        <input asp-for="FirstName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo nombre</label>
+                        <input asp-for="SecondName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Primer apellido</label>
+                        <input asp-for="LastName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo apellido</label>
+                        <input asp-for="SecondSurName" class="form-control" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                Documento y contacto
+            </div>
+
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo documento</label>
+                        <select asp-for="DocumentTypeId"
+                                asp-items="Model.DocumentTypes"
+                                class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Documento</label>
+                        <input asp-for="Document" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Compañía telefónica</label>
+                        <select asp-for="TelephoneCompanyId"
+                                asp-items="Model.TelephoneCompanies"
+                                class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label">Correo</label>
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                Acceso al sistema
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check mb-3">
+                    <input asp-for="CreateSystemUser" class="form-check-input" />
+                    <label asp-for="CreateSystemUser" class="form-check-label">
+                        Crear usuario del sistema para este maestro
+                    </label>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre de usuario</label>
+                        <input asp-for="UserName" class="form-control" placeholder="ej: mvictor" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Contraseña temporal</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña inicial" />
+                    </div>
+
+                    <div class="col-md-12">
+                        <small class="text-muted">
+                            Si activa esta opción, el maestro podrá iniciar sesión con rol TEACHER.
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-page="Index" class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Guardar maestro
+            </button>
+        </div>
+
+    </form>
+
+</div>

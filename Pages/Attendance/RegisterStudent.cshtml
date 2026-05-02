@@ -1,0 +1,123 @@
+@page
+@model AttendanceControl.Web.Pages.Attendance.RegisterStudentModel
+@{
+    Layout = "_PublicLayout";
+}
+
+<div class="attendance-card public-card public-card-wide">
+    <div class="attendance-header">
+        <img class="institution-logo" src="~/images/log_UNHSJM_Texto.jpg" alt="UNHSJM" />
+        <div class="institution-label">Sistema de Control de Asistencia Académica</div>
+        <h3 class="fw-bold mb-0">Registro inicial de estudiante</h3>
+    </div>
+
+    <div class="attendance-body">
+        @if (Model.IsSuccess)
+        {
+            <div class="success-panel">
+                <div class="success-icon">✓</div>
+                <div class="success-message">@Model.Message</div>
+                <p class="success-help">Ya puedes cerrar esta ventana.</p>
+            </div>
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(Model.SubjectName))
+            {
+                <div class="class-summary mb-4">
+                    <div class="summary-kicker">Clase</div>
+                    <h5>@Model.SubjectName</h5>
+
+                    <div class="summary-grid">
+                        <div><span>Docente</span><strong>@Model.TeacherName</strong></div>
+                        <div><span>Fecha</span><strong>@Model.ClassDateText</strong></div>
+                        <div><span>Horario</span><strong>@Model.ClassSchedule</strong></div>
+                        <div><span>Grupo</span><strong>@Model.GroupName</strong></div>
+                        <div><span>Turno</span><strong>@Model.ShiftName</strong></div>
+                        <div><span>Aula</span><strong>@Model.BuildingName / @Model.ClassroomName</strong></div>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="ui-message ui-message-@Model.MessageType">
+                    <div class="ui-message-icon">
+                        @(Model.MessageType == "error" ? "!" : Model.MessageType == "warning" ? "⚠" : "i")
+                    </div>
+                    <div>@Model.Message</div>
+                </div>
+            }
+
+            <form method="post">
+                <input type="hidden" asp-for="Token" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Primer nombre</label>
+                        <input asp-for="FirstName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Segundo nombre</label>
+                        <input asp-for="SecondName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Primer apellido</label>
+                        <input asp-for="LastName" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Segundo apellido</label>
+                        <input asp-for="SecondSurName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Género</label>
+                        <select asp-for="Gender" class="form-select" required>
+                            <option value="">Seleccione</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Carnet o código persona</label>
+                        <input asp-for="Carnet" class="form-control" placeholder="Ej: 2212491" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Cédula</label>
+                        <input asp-for="Cedula" class="form-control" placeholder="Ej: 001-000000-0000A" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Celular</label>
+                        <input asp-for="Phone" class="form-control" placeholder="Ej: 88888888" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Compañía telefónica</label>
+                        <select asp-for="TelephoneCompanyId" asp-items="Model.TelephoneCompanies" class="form-select">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Correo opcional</label>
+                        <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+                    </div>
+                </div>
+
+                <div class="registration-help mb-3">
+                    Debes ingresar al menos uno de estos datos: carnet/código persona, cédula o celular. Estos datos servirán para validar tus próximas asistencias.
+                </div>
+
+                <button type="submit" class="btn btn-unp-primary w-100 mt-2">
+                    Registrarme y marcar asistencia
+                </button>
+            </form>
+        }
+    </div>
+</div>

@@ -1,0 +1,206 @@
+@page
+@model AttendanceControl.Web.Pages.Students.IndexModel
+
+@{
+    ViewData["Title"] = "Estudiantes";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Estudiantes</h2>
+            <p class="text-muted mb-0">Registro, búsqueda y consulta de estudiantes del sistema.</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary">Registrar estudiante</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">Filtros de búsqueda</div>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar</label>
+                        <input asp-for="Search" class="form-control" placeholder="Nombre, documento, teléfono o correo" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Carrera</label>
+                        <select asp-for="CareerId" asp-items="Model.Careers" class="form-select">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Grupo</label>
+                        <select asp-for="GroupId" asp-items="Model.Groups" class="form-select">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label">Género</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="M">M</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                            <option value="all">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Listado de estudiantes</span>
+            <span class="badge bg-light text-primary">@Model.Students.Count registro(s)</span>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Género</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Carrera</th>
+                        <th>Grupo oficial</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Students.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">No se encontraron estudiantes con los filtros seleccionados.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var student in Model.Students)
+                        {
+                            var document = student.TblDocumentStudents.FirstOrDefault(d => d.IsActive);
+                            var phone = student.TblPhoneStudents.FirstOrDefault(p => p.IsActive);
+                            var email = student.TblEmailStudents.FirstOrDefault(e => e.IsActive);
+                            var group = student.TblStudentGroups.FirstOrDefault(g => g.IsActive)?.Group;
+
+                            <tr>
+                                <td class="fw-semibold">@student.FirstName @student.SecondName @student.LastName @student.SecondSurName</td>
+                                <td>
+                                    @if (student.Gender == "M")
+                                    {
+                                        <span class="badge bg-primary">Masculino</span>
+                                    }
+                                    else if (student.Gender == "F")
+                                    {
+                                        <span class="badge bg-info text-dark">Femenino</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@student.Gender</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (document != null)
+                                    {
+                                        <span>@document.DocumentType.DocumentType: @document.Document</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin documento</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (phone != null)
+                                    {
+                                        <span>@phone.Phone <small class="text-muted">(@phone.IdTelephoneCompanyNavigation.Company)</small></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin teléfono</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (email != null)
+                                    {
+                                        <span>@email.Email</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin correo</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (group?.Career != null)
+                                    {
+                                        <span>@group.Career.CareerName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin carrera</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (group != null)
+                                    {
+                                        <span>@group.GroupName <small class="text-muted">- @group.Shift.ShiftName</small></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin grupo</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (student.IsActive)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-page="./Edit" asp-route-id="@student.StudentId" class="btn btn-sm btn-outline-warning">Editar</a>
+                                        @if (student.IsActive)
+                                        {
+                                            <form method="post"
+                                                  asp-page-handler="Delete"
+                                                  asp-route-id="@student.StudentId"
+                                                  data-confirm-submit="true"
+                                                  data-confirm-title="Desactivar estudiante"
+                                                  data-confirm-message="¿Seguro que deseas desactivar este estudiante? No será eliminado de la base de datos."
+                                                  data-confirm-button="Sí, desactivar"
+                                                  style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

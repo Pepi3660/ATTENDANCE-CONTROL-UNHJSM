@@ -1,0 +1,111 @@
+@page
+@model AttendanceControl.Web.Pages.LoginModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acceso - UNHSJM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        :root {
+            --unh-blue: #0b3c7d;
+            --unh-blue-2: #1e5aa8;
+            --unh-blue-dark: #071b3a;
+            --unh-gold: #f2c100;
+            --unh-cyan: #22b8df;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at 18% 12%, rgba(34,184,223,.18), transparent 30%),
+                radial-gradient(circle at 88% 20%, rgba(242,193,0,.14), transparent 28%),
+                linear-gradient(135deg, var(--unh-blue-dark), var(--unh-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(255,255,255,.96);
+            border-radius: 24px;
+            padding: 34px;
+            box-shadow: 0 30px 80px rgba(0,0,0,.28);
+            border: 1px solid rgba(255,255,255,.45);
+        }
+
+        .login-logo {
+            max-width: 260px;
+            width: 90%;
+            margin-bottom: 18px;
+        }
+
+        .login-kicker {
+            color: var(--unh-blue);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .75rem;
+            font-weight: 900;
+        }
+
+        .form-control {
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--unh-blue), var(--unh-blue-2));
+            border: none;
+            color: white;
+            border-radius: 14px;
+            padding: 12px;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <img src="~/images/log_UNHSJM_Texto.jpg" class="login-logo" alt="UNHSJM" />
+            <div class="login-kicker">Sistema de Control de Asistencia</div>
+            <h3 class="fw-bold mb-1">Acceso administrativo</h3>
+            <p class="text-muted mb-0">Ingresa con tu usuario institucional</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger rounded-4">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Usuario o correo</label>
+                <input asp-for="UserNameOrEmail" class="form-control" autocomplete="username" required />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Contraseña</label>
+                <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" required />
+            </div>
+
+            <button type="submit" class="btn btn-login w-100">
+                Iniciar sesión
+            </button>
+        </form>
+    </div>
+</body>
+</html>

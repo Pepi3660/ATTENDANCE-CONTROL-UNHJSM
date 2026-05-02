@@ -1,0 +1,109 @@
+@page
+@model AttendanceControl.Web.Pages.Careers.IndexModel
+
+@{
+    ViewData["Title"] = "Carreras";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Carreras</h2>
+            <p class="text-muted mb-0">Administración de carreras académicas y su relación con los grupos.</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary">Registrar carrera</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">Filtros de búsqueda</div>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Buscar</label>
+                        <input asp-for="Search" class="form-control" placeholder="Nombre de carrera" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Listado de carreras</span>
+            <span class="badge bg-light text-primary">@Model.Careers.Count registro(s)</span>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Carrera</th>
+                        <th>Grupos</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Careers.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">No se encontraron carreras.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var career in Model.Careers)
+                        {
+                            <tr>
+                                <td><code>@career.CareerId</code></td>
+                                <td class="fw-semibold">@career.CareerName</td>
+                                <td>@career.CatGroups.Count(g => g.IsActive)</td>
+                                <td>
+                                    @if (career.IsActive)
+                                    {
+                                        <span class="badge bg-success">Activa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactiva</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-page="./Edit" asp-route-id="@career.CareerId" class="btn btn-sm btn-outline-warning">Editar</a>
+                                        @if (career.IsActive)
+                                        {
+                                            <form method="post"
+                                                  asp-page-handler="Delete"
+                                                  asp-route-id="@career.CareerId"
+                                                  data-confirm-submit="true"
+                                                  data-confirm-title="Desactivar carrera"
+                                                  data-confirm-message="¿Seguro que deseas desactivar esta carrera? Los grupos asociados no se eliminan."
+                                                  data-confirm-button="Sí, desactivar"
+                                                  style="display:inline;">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
